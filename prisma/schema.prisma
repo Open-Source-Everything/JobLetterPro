@@ -14,44 +14,61 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
-
-    @@index([name])
-}
-
 model CoverLetter {
-    id             String               @id @default(cuid())
-    jobDescription String?
-    history        CoverLetterHistory[]
-    user           User?                @relation(fields: [userId], references: [id])
-    userId         String?              @unique()
-    createdAt      DateTime             @default(now())
-    updatedAt      DateTime             @updatedAt
+    id                             String               @id @default(cuid())
+    jobDescription                 String?
+    jobDescriptionGeneratedContent String?
+    coverLetterhistory             CoverLetterHistory[]
+    user                           User?                @relation(fields: [userId], references: [id])
+    userId                         String?              @unique()
+    createdAt                      DateTime             @default(now())
+    updatedAt                      DateTime             @updatedAt
 }
 
 model CoverLetterHistory {
-    id            String       @id @default(cuid())
-    data          String?
-    coverLetter   CoverLetter? @relation(fields: [coverLetterId], references: [id])
-    coverLetterId String?
-    createdAt     DateTime     @default(now())
-    updatedAt     DateTime     @updatedAt
+    id                     String                    @id @default(cuid())
+    tone                   CoverLetterGenerationEnum @default(CONVINCING)
+    jobTitle               String?
+    coverLetterHistoryData String?
+    coverLetter            CoverLetter?              @relation(fields: [coverLetterId], references: [id])
+    coverLetterId          String?
+    createdAt              DateTime                  @default(now())
+    updatedAt              DateTime                  @updatedAt
+}
+
+enum CoverLetterGenerationEnum {
+    APPRECIATIVE
+    ASSERTIVE
+    AWESTRUCK
+    CANDID
+    CASUAL
+    CAUTIONARY
+    COMPASSIONATE
+    CONVINCING
+    CRITICAL
+    EARNEST
+    ENTHUSIASTIC
+    FORMAL
+    FUNNY
+    HUMBLE
+    HUMOROUS
+    INFORMATIVE
+    INSPIRATIONAL
+    JOYFUL
+    PASSIONATE
+    THOUGHTFUL
+    URGENT
+    WORRIED
 }
 
 model Resume {
-    id            String   @id @default(cuid())
-    extractedData Json?
-    user          User?    @relation(fields: [userId], references: [id])
-    userId        String?  @unique()
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+    id               String   @id @default(cuid())
+    extractedData    Json?
+    generatedContent String?
+    user             User?    @relation(fields: [userId], references: [id])
+    userId           String?  @unique()
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
 }
 
 // Necessary for Next auth
@@ -61,12 +78,12 @@ model Account {
     type                     String
     provider                 String
     providerAccountId        String
-    refresh_token            String? // @db.Text
-    access_token             String? // @db.Text
+    refresh_token            String?
+    access_token             String?
     expires_at               Int?
     token_type               String?
     scope                    String?
-    id_token                 String? // @db.Text
+    id_token                 String?
     session_state            String?
     user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
     refresh_token_expires_in Int?
@@ -83,16 +100,15 @@ model Session {
 }
 
 model User {
-    id            String       @id @default(cuid())
+    id            String        @id @default(cuid())
     name          String?
-    email         String?      @unique
+    email         String?       @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
-    posts         Post[]
     CoverLetter   CoverLetter[]
-    Resume        Resume?
+    Resume        Resume[]
 }
 
 model VerificationToken {
