@@ -755,7 +755,7 @@ function generateCoverLetterPrompt(generatedData: GeneratedData): string {
     ${generatedData.coverLetterInstructions}
 
     Please structure the cover letter with the following sections, each wrapped in XML-style tags:
-    <header>: Include the current date, candidate's name, contact information, and relevant links.
+    <header>: Include the current date in format DD Month, Year example 17 July, 2024 and candidate's name. DO NOT ADD ANY DATE. ONLY ADD THE TODAY'S DATE.
     <greeting>: A personalized salutation.
     <opening_paragraph>: Express enthusiasm and briefly state how the candidate's background aligns with the role.
     <technical_expertise_paragraph>: Highlight relevant technical skills and experiences.
