@@ -1,3 +1,4 @@
+
 import { api } from "@/utils/api";
 import React, { useState } from "react";
 
@@ -49,6 +50,7 @@ const Test = () => {
       >
         Submit for cover letter
       </button>
+       <PdfTextExtractor />
     </div>
   );
 };
