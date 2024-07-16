@@ -1,22 +1,17 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { getAzureGPTQuery } from "@/utils/azureGptApi";
-import { Ollama } from "ollama";
-import { createOpenAI } from "@ai-sdk/openai";
-import { generateText } from "ai";
+// import { Ollama } from "ollama";
+// import { createOpenAI } from "@ai-sdk/openai";
 import { getGroqApi } from "@/utils/getGroqApi";
 
-const groq = createOpenAI({
-  baseURL: "https://api.groq.com/openai/v1",
-  apiKey: "",
-});
+// const groq = createOpenAI({
+//   baseURL: "https://api.groq.com/openai/v1",
+//   apiKey: "",
+// });
 
-const ollama = new Ollama({ host: "https://ollama.kumard3.in" });
+// const ollama = new Ollama({ host: "https://ollama.kumard3.in" });
 export const coverLetterRouter = createTRPCRouter({
   jobDescription: publicProcedure
     .input(z.object({ text: z.string() }))
@@ -340,7 +335,6 @@ markdown
 8. Signature:
    - Include a professional closing (e.g., "Sincerely," or "Best regards,")
    - Type full name
-   - Optional: Include links to portfolio or relevant projects
 
 ## Tone and Style Guidelines
 - Tone: Professional yet [mention specific tone that reflects company culture, e.g., conversational, innovative, etc.]
@@ -390,6 +384,8 @@ ${generatedResumeData}
 ## Cover Letter Generation Instructions
 
 ${generatedCoverLetterGenerationData}
+
+NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the final cover letter. Replace them with the actual company name and position title from the job description. Also DO NOT ADD Texts like "This is you cover letter based...." in the final cover letter. 
   `);
 
       return {
