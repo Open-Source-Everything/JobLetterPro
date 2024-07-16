@@ -52,11 +52,14 @@ export default function Index({}) {
   const [active, setActive] = useState(0);
 
   const [text, setText] = useState("");
+  const [jd, setJd] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
+  const { mutate, data } =
+    api.coverLetter.generateCoverLetterFromTemplate.useMutation();
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
@@ -152,7 +155,7 @@ export default function Index({}) {
                         </Group>
                       </Dropzone>
                     </div>
-                    {text}
+                    {/* {text} */}
                   </Stepper.Step>
                   <Stepper.Step label="Second step" description="Verify email">
                     Step 2 content: Verify email
@@ -161,6 +164,20 @@ export default function Index({}) {
                     Completed, click back button to get to previous step
                   </Stepper.Completed>
                 </Stepper>
+
+                <input onChange={(e) => setJd(e.target.value)} />
+                <Button
+                  onClick={() => {
+                    mutate({
+                      jobDescription: jd,
+                      resumeData: text,
+                    });
+                  }}
+                >
+                  Next
+                </Button>
+
+                {data}
               </div>
             </LayoutContainer>
           </div>

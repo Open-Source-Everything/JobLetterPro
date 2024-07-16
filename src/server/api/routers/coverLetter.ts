@@ -7,7 +7,16 @@ import {
 } from "@/server/api/trpc";
 import { getAzureGPTQuery } from "@/utils/azureGptApi";
 import { get } from "http";
+import { Ollama } from "ollama";
+import { createOpenAI } from "@ai-sdk/openai";
+import { generateText } from "ai";
 
+const groq = createOpenAI({
+  baseURL: "https://api.groq.com/openai/v1",
+  apiKey: "",
+});
+
+const ollama = new Ollama({ host: "https://ollama.kumard3.in" });
 export const coverLetterRouter = createTRPCRouter({
   jobDescription: publicProcedure
     .input(z.object({ text: z.string() }))
@@ -391,28 +400,20 @@ ${generatedCoverLetterGenerationData}
       };
     }),
 
-  //   create: protectedProcedure
-  //     .input(z.object({ name: z.string().min(1) }))
-  //     .mutation(async ({ ctx, input }) => {
-  //       // simulate a slow db call
-  //       await new Promise((resolve) => setTimeout(resolve, 1000));
+  generateCoverLetterFromTemplate: publicProcedure
+    .input(z.object({ jobDescription: z.string(), resumeData: z.string() }))
+    .mutation(async ({ input }) => {
+      const { text } = await generateText({
+        model: groq("llama3-8b-8192"),
+        prompt: `
+        can you generate a cover letter for the following job description and resume data?
+        Resume Data as plain text: ${input.resumeData}
+        Job Description as plain text: ${input.jobDescription}
+        `,
+      });
 
-  //       return ctx.db.post.create({
-  //         data: {
-  //           name: input.name,
-  //           createdBy: { connect: { id: ctx.session.user.id } },
-  //         },
-  //       });
-  //     }),
-
-  //   getLatest: protectedProcedure.query(({ ctx }) => {
-  //     return ctx.db.post.findFirst({
-  //       orderBy: { createdAt: "desc" },
-  //       where: { createdBy: { id: ctx.session.user.id } },
-  //     });
-  //   }),
-
-  //   getSecretMessage: protectedProcedure.query(() => {
-  //     return "you can now see this secret message!";
-  //   }),
+      // console.log(letter);
+      console.log(text);
+      return text;
+    }),
 });
