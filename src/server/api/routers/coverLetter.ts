@@ -2,9 +2,10 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { getAzureGPTQuery } from "@/utils/azureGptApi";
+import { getGroqApi } from "@/utils/getGroqApi";
 // import { Ollama } from "ollama";
 // import { createOpenAI } from "@ai-sdk/openai";
-import { getGroqApi } from "@/utils/getGroqApi";
+// import { getAzureGPTQuery } from "@/utils/getAzureGPTQuery";
 
 // const groq = createOpenAI({
 //   baseURL: "https://api.groq.com/openai/v1",
@@ -399,7 +400,7 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
   //   generateCoverLetterFromTemplate: publicProcedure
   //     .input(z.object({ jobDescription: z.string(), resumeData: z.string() }))
   //     .mutation(async ({ input }) => {
-  //       const generatedJobDescription = await getGroqApi(`
+  //       const generatedJobDescription = await getAzureGPTQuery(`
   //         # Job Description Summary Extraction Prompt
 
   // Use the following steps to extract key information from a job description and format it into a concise summary:
@@ -452,7 +453,7 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
 
   // ${input.jobDescription}
   // `);
-  //       const generatedResumeData = await getGroqApi(`
+  //       const generatedResumeData = await getAzureGPTQuery(`
   //   # Candidate Experience and Skills Extraction Prompt
 
   // Use the following steps to extract key information from a candidate's resume and format it into a concise summary of relevant experience and technical skills:
@@ -521,7 +522,7 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
 
   // ${input.resumeData}
   // `);
-  //       const generatedCoverLetterGenerationData = await getGroqApi(`
+  //       const generatedCoverLetterGenerationData = await getAzureGPTQuery(`
   //   # Cover Letter Instructions Generator Prompt
 
   // Use the following steps to create tailored cover letter generation instructions based on a given job description:
@@ -608,7 +609,7 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
   // ${input.jobDescription}
   // `);
 
-  //       const generatedCoverLetter = await getGroqApi(`
+  //       const generatedCoverLetter = await getAzureGPTQuery(`
   //   # Cover Letter Generation Prompt
 
   // ## Candidate Information
@@ -628,7 +629,7 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
 
   // ${generatedCoverLetterGenerationData}
   //   `);
-  //       // const data = await getGroqApi(`
+  //       // const data = await getAzureGPTQuery(`
   //       //   can you generate a cover letter for the following job description and resume data?
   //       //   Resume Data as plain text: ${input.resumeData}
   //       //   Job Description as plain text: ${input.jobDescription}
@@ -642,11 +643,12 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
   //         generatedCoverLetterGenerationData,
   //       };
   //     }),
-  generateCoverLetterFromTemplate : publicProcedure
+  generateCoverLetterFromTemplate: publicProcedure
     .input(z.object({ jobDescription: z.string(), resumeData: z.string() }))
     .mutation(async ({ input }) => {
       try {
-        // Generate data for each section
+        console.log("Starting cover letter generation process");
+
         const generatedData: GeneratedData = {
           jobDescription: await getGroqApi(
             generatePrompt("jobDescription", input.jobDescription),
@@ -659,93 +661,79 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
           ),
         };
 
-        // Generate the structured cover letter
-        const structuredCoverLetterPrompt =
-          generateStructuredCoverLetterPrompt(generatedData);
-        const generatedCoverLetter = await getGroqApi(
-          structuredCoverLetterPrompt,
-        );
+        console.log("Generated data:", generatedData);
 
-        // Parse and format the cover letter
-        const parsedCoverLetter =
-          parseStructuredCoverLetter(generatedCoverLetter);
-        const formattedCoverLetter = formatCoverLetter(parsedCoverLetter);
+        const coverLetterPrompt = generateCoverLetterPrompt(generatedData);
+        console.log("Cover letter prompt:", coverLetterPrompt);
+
+        const generatedCoverLetter = await getGroqApi(coverLetterPrompt);
+        console.log("Generated cover letter:", generatedCoverLetter);
+
+        const extractedCoverLetter = extractCoverLetter(generatedCoverLetter);
+        console.log("Extracted cover letter:", extractedCoverLetter);
+
+        const formattedCoverLetter = formatCoverLetter(extractedCoverLetter);
+        console.log("Formatted cover letter:", formattedCoverLetter);
 
         return {
-          generatedCoverLetter: formattedCoverLetter,
-          generatedJobDescription: generatedData.jobDescription,
-          generatedResumeData: generatedData.resumeData,
-          generatedCoverLetterInstructions:
-            generatedData.coverLetterInstructions,
+          coverLetter: formattedCoverLetter,
+          jobSummary: generatedData.jobDescription,
+          candidateSummary: generatedData.resumeData,
         };
       } catch (error) {
         console.error("Error generating cover letter:", error);
-        throw new Error("Failed to generate cover letter");
+        throw new Error(
+          "Failed to generate cover letter: " +
+            (error instanceof Error ? error.message : String(error)),
+        );
       }
     }),
 });
-
 type GeneratedData = {
   jobDescription: string;
   resumeData: string;
   coverLetterInstructions: string;
 };
 
-// Define a type for the structured cover letter
-type StructuredCoverLetter = {
-  header: string;
-  greeting: string;
-  openingParagraph: string;
-  technicalExpertiseParagraph: string;
-  leadershipCommunicationParagraph: string;
-  productDevelopmentParagraph: string;
-  adaptabilityParagraph: string;
-  closingParagraph: string;
-  signature: string;
-};
-
-// Function to generate prompts for each section
 function generatePrompt(type: keyof GeneratedData, input: string): string {
   const prompts = {
     jobDescription: `
-      # Job Description Summary Extraction Prompt
-      Use the following steps to extract key information from a job description and format it into a concise summary:
+      Analyze the following job description and provide a concise summary:
       1. Identify the position title and company name.
-      2. Determine if the company or project is open-source (if mentioned).
-      3. Extract key requirements and responsibilities from the job description.
-      4. Consolidate similar points and prioritize the most important requirements.
-      5. Format the extracted information as a markdown list.
-      6. Aim for 6-10 key requirements, focusing on the most crucial aspects of the role.
-      7. Use clear, concise language for each requirement.
-      8. Ensure that the summary captures the essence of the role and the company's values.
+      2. List 6-8 key requirements and responsibilities, focusing on technical skills, soft skills, and any unique aspects of the role.
+      3. Briefly describe the company culture and values if mentioned.
+      4. Note any specific projects, products, or technologies mentioned.
+      5. Identify if it's a remote position and any location requirements.
 
-      The Job description:
+      Format the summary as a markdown list. Be concise and specific.
+
+      Job Description:
       ${input}
     `,
     resumeData: `
-      # Candidate Experience and Skills Extraction Prompt
-      Use the following steps to extract key information from a candidate's resume and format it into a concise summary of relevant experience and technical skills:
-      1. Identify the candidate's current or most recent role and employer.
-      2. Extract 4-6 key achievements or responsibilities from the candidate's work experience.
-      3. Identify the candidate's technical skills, categorizing them into: Languages, Frameworks/Libraries, Tools & Technologies, Concepts.
-      4. Format the extracted information as a markdown list.
-      5. For the key achievements: Start each point with an action verb, include quantifiable results where possible, focus on achievements that demonstrate leadership, technical skills, or significant impact.
-      6. For the technical skills: List the most relevant and advanced skills first, include version numbers or specific details if mentioned.
-      7. Ensure that the summary captures the candidate's most impressive and relevant experiences and skills.
+      Analyze the following resume and provide a concise summary:
+      1. State the candidate's name and current or most recent role.
+      2. List 4-6 key achievements or responsibilities, prioritizing those most relevant to a software engineering role.
+      3. Summarize technical skills, categorizing into: Languages, Frameworks/Libraries, Tools & Technologies, and Concepts.
+      4. Highlight any leadership experience or significant projects.
+      5. Note any relevant education or certifications.
 
-      The resume data:
+      Format the summary as a markdown list. Focus on quantifiable achievements and the most advanced or relevant skills.
+
+      Resume:
       ${input}
     `,
     coverLetterInstructions: `
-      # Cover Letter Instructions Generator Prompt
-      Use the following steps to create tailored cover letter generation instructions based on the given job description:
-      1. Analyze the job description to identify: Company name, Position title, Key technical requirements, Desired soft skills, Company culture and values, Any specific projects or products mentioned, Company size and growth stage.
-      2. Create instructions for each paragraph of the cover letter, including: Opening, Technical Expertise, Team Leadership and Communication, Product Development and Ownership, Adaptability and Growth Mindset, Closing.
-      3. Provide tone and style guidelines that reflect the company culture.
-      4. Include additional notes on what to emphasize and avoid in the cover letter.
-      5. Format the instructions as a markdown list.
+      Based on the job description, provide instructions for writing a powerful cover letter:
+      1. Suggest a tone and style that would resonate with the company culture.
+      2. List 3-4 key points from the candidate's experience that should be emphasized.
+      3. Identify any specific skills or experiences from the job description that should be addressed.
+      4. Suggest how to demonstrate enthusiasm for the role and company.
+      5. Provide guidance on how to close the letter effectively.
 
-      The Job Description:
+      Format your response as a markdown list of concise, actionable instructions.
+
+      Job Description:
       ${input}
     `,
   };
@@ -753,67 +741,9 @@ function generatePrompt(type: keyof GeneratedData, input: string): string {
   return prompts[type];
 }
 
-// Function to generate the structured cover letter prompt
-function generateStructuredCoverLetterPrompt(
-  generatedData: GeneratedData,
-): string {
+function generateCoverLetterPrompt(generatedData: GeneratedData): string {
   return `
-    # Structured Cover Letter Generation Prompt
-
-    Using the provided job description summary, candidate's relevant experience, and cover letter generation instructions, please fill in the following template to create a cover letter:
-
-    <header>
-    [Current Date in format: Month Day, Year]
-
-    Anish Prashun
-    anishprashun118@gmail.com
-    +91 79706 15211
-    linkedin.com/in/anishpras118
-    github.com/Anishpras
-    anishprashun.me
-    </header>
-
-    <greeting>
-    Dear Hiring Manager at [Company Name],
-    </greeting>
-
-    <opening_paragraph>
-    [Express enthusiasm for the position, mention current role and years of experience, and briefly state how the candidate's background aligns with the company's key aspects]
-    </opening_paragraph>
-
-    <technical_expertise_paragraph>
-    [Highlight relevant technical skills, emphasize experience with specific types of products or challenges, and mention any open-source contributions or interests]
-    </technical_expertise_paragraph>
-
-    <leadership_communication_paragraph>
-    [Discuss leadership experience, highlight communication skills, and emphasize ability to collaborate and engage with the community]
-    </leadership_communication_paragraph>
-
-    <product_development_paragraph>
-    [Describe experience in building and owning features, highlight decision-making abilities, and mention experience with relevant tools and practices]
-    </product_development_paragraph>
-
-    <adaptability_paragraph>
-    [Express comfort with the company's specific challenges or environment, highlight ability to take on diverse responsibilities, and mention willingness to contribute beyond coding]
-    </adaptability_paragraph>
-
-    <closing_paragraph>
-    [Reiterate enthusiasm, express eagerness to contribute, and include a call to action for further discussion]
-    </closing_paragraph>
-
-    <signature>
-    Sincerely,
-    Anish Prashun
-
-    anishprashun.me
-    </signature>
-
-    Please ensure the content adheres to the following guidelines:
-    - Tone: Professional yet [mention specific tone that reflects company culture]
-    - Style: Clear, concise, and engaging
-    - Personalization: Include specific examples from the candidate's experience
-    - Length: Aim for about 400-500 words
-    - Format: Use proper business letter format as shown in the template
+    Create a powerful and personalized cover letter using the following information:
 
     Job Description Summary:
     ${generatedData.jobDescription}
@@ -821,15 +751,32 @@ function generateStructuredCoverLetterPrompt(
     Candidate's Relevant Experience:
     ${generatedData.resumeData}
 
-    Cover Letter Generation Instructions:
+    Cover Letter Writing Instructions:
     ${generatedData.coverLetterInstructions}
+
+    Please structure the cover letter with the following sections, each wrapped in XML-style tags:
+    <header>: Include the current date, candidate's name, contact information, and relevant links.
+    <greeting>: A personalized salutation.
+    <opening_paragraph>: Express enthusiasm and briefly state how the candidate's background aligns with the role.
+    <technical_expertise_paragraph>: Highlight relevant technical skills and experiences.
+    <leadership_communication_paragraph>: Discuss leadership experience and communication skills.
+    <product_development_paragraph>: Describe experience in building and owning features.
+    <adaptability_paragraph>: Express comfort with the company's environment and willingness to contribute beyond coding.
+    <closing_paragraph>: Reiterate enthusiasm and include a call to action.
+    <signature>: Professional closing and signature.
+
+    Ensure the content is engaging, concise, and tailored to the specific job and company. Aim for about 400-500 words total.
   `;
 }
 
-// Function to parse the structured cover letter
-function parseStructuredCoverLetter(
-  coverLetterString: string,
-): StructuredCoverLetter {
+function extractCoverLetter(generatedText: string): string {
+  // First, try to extract the content between <header> and </signature> tags
+  const fullLetterMatch = generatedText.match(/<header>[\s\S]*<\/signature>/);
+  if (fullLetterMatch) {
+    return fullLetterMatch[0];
+  }
+
+  // If that fails, try to extract individual sections
   const sections = [
     "header",
     "greeting",
@@ -841,36 +788,32 @@ function parseStructuredCoverLetter(
     "closing_paragraph",
     "signature",
   ];
-  const parsedLetter: Partial<StructuredCoverLetter> = {};
 
+  let extractedContent = "";
   sections.forEach((section) => {
-    const regex = new RegExp(`<${section}>\n(.*?)\n</${section}>`, "s");
-    const match = coverLetterString.match(regex);
+    const regex = new RegExp(`<${section}>[\\s\\S]*?<\/${section}>`, "g");
+    const match = generatedText.match(regex);
     if (match) {
-      parsedLetter[section as keyof StructuredCoverLetter] = match[1].trim();
+      extractedContent += match[0] + "\n\n";
     }
   });
 
-  return parsedLetter as StructuredCoverLetter;
+  // If we extracted any content, return it
+  if (extractedContent.trim()) {
+    return extractedContent.trim();
+  }
+
+  // If all else fails, return the original text
+  return generatedText;
 }
 
-// Function to format the final cover letter
-function formatCoverLetter(structuredLetter: StructuredCoverLetter): string {
-  return `${structuredLetter.header}
+function formatCoverLetter(coverLetter: string): string {
+  // Remove XML tags
+  let formatted = coverLetter.replace(/<\/?[^>]+(>|$)/g, "");
 
-${structuredLetter.greeting}
+  // Remove extra newlines
+  formatted = formatted.replace(/\n{3,}/g, "\n\n");
 
-${structuredLetter.openingParagraph}
-
-${structuredLetter.technicalExpertiseParagraph}
-
-${structuredLetter.leadershipCommunicationParagraph}
-
-${structuredLetter.productDevelopmentParagraph}
-
-${structuredLetter.adaptabilityParagraph}
-
-${structuredLetter.closingParagraph}
-
-${structuredLetter.signature}`;
+  // Trim whitespace
+  return formatted.trim();
 }
