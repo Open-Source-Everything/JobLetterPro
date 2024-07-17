@@ -78,13 +78,12 @@ export function generateCoverLetterPrompt(
 }
 
 export function extractCoverLetter(generatedText: string): string {
-  // First, try to extract the content between <header> and </signature> tags
-  const fullLetterMatch = generatedText.match(/<header>[\s\S]*<\/signature>/);
-  if (fullLetterMatch) {
-    return fullLetterMatch[0];
+  // Remove any content before the <header> tag
+  const startIndex = generatedText.indexOf("<header>");
+  if (startIndex !== -1) {
+    generatedText = generatedText.slice(startIndex);
   }
 
-  // If that fails, try to extract individual sections
   const sections = [
     "header",
     "greeting",
@@ -99,10 +98,10 @@ export function extractCoverLetter(generatedText: string): string {
 
   let extractedContent = "";
   sections.forEach((section) => {
-    const regex = new RegExp(`<${section}>[\\s\\S]*?<\/${section}>`, "g");
+    const regex = new RegExp(`<${section}>([\s\S]*?)<\/${section}>`, "i");
     const match = generatedText.match(regex);
-    if (match) {
-      extractedContent += match[0] + "\n\n";
+    if (match?.[1]) {
+      extractedContent += `<${section}>${match[1].trim()}</${section}>\n\n`;
     }
   });
 
