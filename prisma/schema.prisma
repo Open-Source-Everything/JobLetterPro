@@ -27,7 +27,7 @@ model CoverLetter {
 
 model CoverLetterHistory {
     id                     String                    @id @default(cuid())
-    tone                   CoverLetterGenerationEnum @default(CONVINCING)
+    // tone                   CoverLetterGenerationEnum @default(CONVINCING)
     jobTitle               String?
     coverLetterHistoryData String?
     coverLetter            CoverLetter?              @relation(fields: [coverLetterId], references: [id])
@@ -36,30 +36,30 @@ model CoverLetterHistory {
     updatedAt              DateTime                  @updatedAt
 }
 
-enum CoverLetterGenerationEnum {
-    APPRECIATIVE
-    ASSERTIVE
-    AWESTRUCK
-    CANDID
-    CASUAL
-    CAUTIONARY
-    COMPASSIONATE
-    CONVINCING
-    CRITICAL
-    EARNEST
-    ENTHUSIASTIC
-    FORMAL
-    FUNNY
-    HUMBLE
-    HUMOROUS
-    INFORMATIVE
-    INSPIRATIONAL
-    JOYFUL
-    PASSIONATE
-    THOUGHTFUL
-    URGENT
-    WORRIED
-}
+// enum CoverLetterGenerationEnum {
+//     APPRECIATIVE
+//     ASSERTIVE
+//     AWESTRUCK
+//     CANDID
+//     CASUAL
+//     CAUTIONARY
+//     COMPASSIONATE
+//     CONVINCING
+//     CRITICAL
+//     EARNEST
+//     ENTHUSIASTIC
+//     FORMAL
+//     FUNNY
+//     HUMBLE
+//     HUMOROUS
+//     INFORMATIVE
+//     INSPIRATIONAL
+//     JOYFUL
+//     PASSIONATE
+//     THOUGHTFUL
+//     URGENT
+//     WORRIED
+// }
 
 model Resume {
     id               String   @id @default(cuid())
