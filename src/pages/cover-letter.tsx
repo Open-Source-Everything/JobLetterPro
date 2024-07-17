@@ -177,7 +177,9 @@ export default function Index({}) {
                   Next
                 </Button>
 
-                {data}
+                <div className="h-[500px] w-full overflow-y-auto">
+                  <p>{data?.coverLetter}</p>
+                </div>
               </div>
             </LayoutContainer>
           </div>
