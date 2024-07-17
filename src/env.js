@@ -25,6 +25,7 @@ export const env = createEnv({
     AZURE_OPENAI_URL: z.string().url(),
     AZURE_OPENAI_KEY: z.string(),
     AZURE_OPENAI_DEPLOYMENT_ID: z.string(),
+    GROQ_API_KEY: z.string(),
   },
 
   /**
@@ -48,6 +49,7 @@ export const env = createEnv({
     AZURE_OPENAI_URL: process.env.AZURE_OPENAI_URL,
     AZURE_OPENAI_KEY: process.env.AZURE_OPENAI_KEY,
     AZURE_OPENAI_DEPLOYMENT_ID: process.env.AZURE_OPENAI_DEPLOYMENT_ID,
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

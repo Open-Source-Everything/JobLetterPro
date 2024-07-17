@@ -20,20 +20,20 @@ model CoverLetter {
     jobDescriptionGeneratedContent String?
     coverLetterhistory             CoverLetterHistory[]
     user                           User?                @relation(fields: [userId], references: [id])
-    userId                         String?              @unique()
+    userId                         String?
     createdAt                      DateTime             @default(now())
     updatedAt                      DateTime             @updatedAt
 }
 
 model CoverLetterHistory {
-    id                     String                    @id @default(cuid())
+    id                     String       @id @default(cuid())
     // tone                   CoverLetterGenerationEnum @default(CONVINCING)
     jobTitle               String?
     coverLetterHistoryData String?
-    coverLetter            CoverLetter?              @relation(fields: [coverLetterId], references: [id])
+    coverLetter            CoverLetter? @relation(fields: [coverLetterId], references: [id])
     coverLetterId          String?
-    createdAt              DateTime                  @default(now())
-    updatedAt              DateTime                  @updatedAt
+    createdAt              DateTime     @default(now())
+    updatedAt              DateTime     @updatedAt
 }
 
 // enum CoverLetterGenerationEnum {
@@ -63,10 +63,10 @@ model CoverLetterHistory {
 
 model Resume {
     id               String   @id @default(cuid())
-    extractedData    Json?
+    extractedData    String?
     generatedContent String?
     user             User?    @relation(fields: [userId], references: [id])
-    userId           String?  @unique()
+    userId           String?
     createdAt        DateTime @default(now())
     updatedAt        DateTime @updatedAt
 }

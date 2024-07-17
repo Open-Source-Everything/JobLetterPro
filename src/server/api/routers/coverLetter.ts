@@ -408,45 +408,45 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
         generatedCoverLetterGenerationData,
       };
     }),
-  // generateCoverLetterFromTemplate: publicProcedure
-  //   .input(z.object({ jobDescription: z.string(), resumeData: z.string() }))
-  //   .mutation(async ({ input }) => {
-  //     try {
-  //       console.log("Starting cover letter generation process");
+  generateCoverLetterFromTemplate: publicProcedure
+    .input(z.object({ jobDescription: z.string(), resumeData: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        console.log("Starting cover letter generation process");
 
-  //       const generatedData: GeneratedData = {
-  //         jobDescription: await getGroqApi(
-  //           generatePrompt("jobDescription", input.jobDescription),
-  //         ),
-  //         resumeData: await getGroqApi(
-  //           generatePrompt("resumeData", input.resumeData),
-  //         ),
-  //         coverLetterInstructions: await getGroqApi(
-  //           generatePrompt("coverLetterInstructions", input.jobDescription),
-  //         ),
-  //       };
+        const generatedData: GeneratedData = {
+          jobDescription: await getGroqApi(
+            generatePrompt("jobDescription", input.jobDescription),
+          ),
+          resumeData: await getGroqApi(
+            generatePrompt("resumeData", input.resumeData),
+          ),
+          coverLetterInstructions: await getGroqApi(
+            generatePrompt("coverLetterInstructions", input.jobDescription),
+          ),
+        };
 
-  //       const coverLetterPrompt = generateCoverLetterPrompt(generatedData);
+        const coverLetterPrompt = generateCoverLetterPrompt(generatedData);
 
-  //       const generatedCoverLetter = await getGroqApi(coverLetterPrompt);
+        const generatedCoverLetter = await getGroqApi(coverLetterPrompt);
 
-  //       const extractedCoverLetter = extractCoverLetter(generatedCoverLetter);
+        const extractedCoverLetter = extractCoverLetter(generatedCoverLetter);
 
-  //       const formattedCoverLetter = formatCoverLetter(extractedCoverLetter);
+        const formattedCoverLetter = formatCoverLetter(extractedCoverLetter);
 
-  //       return {
-  //         coverLetter: formattedCoverLetter,
-  //         jobSummary: generatedData.jobDescription,
-  //         candidateSummary: generatedData.resumeData,
-  //       };
-  //     } catch (error) {
-  //       console.error("Error generating cover letter:", error);
-  //       throw new Error(
-  //         "Failed to generate cover letter: " +
-  //           (error instanceof Error ? error.message : String(error)),
-  //       );
-  //     }
-  //   }),
+        return {
+          coverLetter: formattedCoverLetter,
+          jobSummary: generatedData.jobDescription,
+          candidateSummary: generatedData.resumeData,
+        };
+      } catch (error) {
+        console.error("Error generating cover letter:", error);
+        throw new Error(
+          "Failed to generate cover letter: " +
+            (error instanceof Error ? error.message : String(error)),
+        );
+      }
+    }),
   generateCoverLetterForSelectedResume: protectedProcedure
     .input(
       z.object({
@@ -541,3 +541,9 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
       };
     }),
 });
+
+// {
+//   "coverLetter": "17 July, 2024\n\nDear Hiring Manager,",
+//   "jobSummary": "Here is a concise summary of the job description in markdown format:\n\n**Position Title and Company Name**\n* Position: Full-Stack Engineer\n* Company: Lightdash\n\n**Key Requirements and Responsibilities**\n* Build and own features from start to finish\n* Collaborate with a small, high-performing team\n* Communicate effectively, especially in a remote team\n* Contribute to company strategy and product development\n* Experience with open source projects and good design (UI/UX)\n* Comfortable with ambiguity and making trade-off decisions\n* Ability to work independently and as part of a team\n\n**Company Culture and Values**\n* Emphasis on collaboration, inclusivity, and diversity\n* Open source product with a focus on community engagement\n* Values transparency, accountability, and continuous improvement\n* Encourages feedback and iteration\n\n**Specific Projects, Products, or Technologies**\n* Tech stack: Typescript, React, Node, SQL, express, react-hooks, Docker, GCP\n\n**Remote Position and Location Requirements**\n* Remote position, no specific location requirements mentioned\n\n**Additional Notes**\n* The company encourages candidates from diverse backgrounds to apply and is committed to building an inclusive workplace.",
+//   "candidateSummary": "Here is a concise summary of the candidate's resume in markdown format:\n\n**Summary**\n================\n\n### Candidate Information\n------------------------\n\n* Name: Anish Prashun\n* Current Role: Software Development Engineer & Team Lead at XAMTAC CONSULTING LLC\n\n### Key Achievements\n--------------------\n\n* Spearheaded the creation of an AI-powered marketing ERP system, driving 25% increase in client conversion rates and supporting 1K+ daily active users\n* Architected key features of Xamtac SaaS platform, driving 35% increase in adoption and 30% boost in client retention\n* Engineered asset library system and multi-channel campaign tool, reducing time-to-market by 40% and improving campaign coordination by 45%\n* Designed client portal and email marketing suite with no-code builder, elevating email engagement by 50%\n\n### Technical Skills\n-------------------\n\n* **Languages**: JavaScript (ES6+), TypeScript, Rust, Solidity, SQL, PostgreSQL, MongoDB, HTML5, CSS3/SASS\n* **Frameworks/Libraries**: React.js, Next.js, Node, Hono, Nest.js, Bun, tRPC, Express.js, Django, GraphQL, Redux, Jest, Cypress\n* **Tools & Technologies**: Git, Docker, Jenkins, Prisma, Drizzle, AWS (EC2, ECS, ECR, S3, Lambda, SES, Route53, SNS, RDS), Azure (Container Apps, App Service, Container Registries, Postgres Database, Storage Accounts), Firebase, Redis, Elasticsearch\n* **Concepts**: Agile/Scrum, Microservices Architecture, RESTful APIs, Test-Driven Development, Blockchain, CI/CD, Serverless Computing\n\n### Leadership Experience\n-------------------------\n\n* Promoted to Team Lead, mentoring and guiding a 14-member development team, elevating overall code quality by 35%\n* Led development of key client projects as agency representative, including Poshmom E-Commerce and TalkTales\n\n### Education\n------------\n\n* B.Tech in Computer Science from AMITY UNIVERSITY, PATNA (2019-2023)\n\n### Achievements\n----------------\n\n* Smart India Hackathon Winner\n* Secured Intellectual Property Rights (Copyright) for A-Lab project, impacting 10,000+ students across India\n* Achieved Postman Student Expert certification"
+// }
