@@ -1,4 +1,5 @@
 
+import PdfTextExtractor from "@/components/text";
 import { api } from "@/utils/api";
 import React, { useState } from "react";
 
