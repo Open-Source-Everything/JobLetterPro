@@ -410,7 +410,7 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
     }),
   generateCoverLetterFromTemplate: publicProcedure
     .input(z.object({ jobDescription: z.string(), resumeData: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         console.log("Starting cover letter generation process");
 
@@ -434,14 +434,23 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
 
         const formattedCoverLetter = formatCoverLetter(extractedCoverLetter);
 
+        await ctx.db.guestCoverLetter.create({
+          data: {
+            jobDescription: input.jobDescription,
+            resumeData: input.resumeData,
+            jobDescriptionGeneratedContent: generatedData.jobDescription,
+            resumeGeneratedContent: generatedData.resumeData,
+            coverLetterGeneratedContent: formattedCoverLetter,
+            coverLetterInstructions: generatedData.coverLetterInstructions,
+          },
+        });
+
         return {
           coverLetter: formattedCoverLetter,
-          jobSummary: generatedData.jobDescription,
-          candidateSummary: generatedData.resumeData,
         };
       } catch (error) {
         console.error("Error generating cover letter:", error);
-        throw new Error(
+        throw new TRPCClientError(
           "Failed to generate cover letter: " +
             (error instanceof Error ? error.message : String(error)),
         );

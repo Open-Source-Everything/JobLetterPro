@@ -8,7 +8,11 @@ const groq = createOpenAI({
 export const getGroqApi = async (inputString: string) => {
   const { text } = await generateText({
     model: groq("llama3-8b-8192"),
+
     prompt: inputString,
   });
+
+  // how can i add a wait for 2seconds here?
+
   return text;
 };

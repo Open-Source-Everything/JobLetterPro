@@ -9,6 +9,7 @@ import { MantineProvider } from "@mantine/core";
 import { api } from "@/utils/api";
 
 import "@/styles/globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -27,6 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         </Head>
         <div className={GeistSans.className}>
           <Component {...pageProps} />
+          <Toaster />
         </div>
       </SessionProvider>
     </MantineProvider>

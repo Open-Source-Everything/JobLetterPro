@@ -14,6 +14,22 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model GuestCoverLetter {
+    id                             String   @id @default(cuid())
+    jobDescription                 String?
+    resumeData                     String?
+    jobDescriptionGeneratedContent String?
+    resumeGeneratedContent         String?
+    
+    coverLetterGeneratedContent    String?
+    coverLetterInstructions        String?
+
+
+    location                       String?
+    createdAt                      DateTime @default(now())
+    updatedAt                      DateTime @updatedAt
+}
+
 model CoverLetter {
     id                             String               @id @default(cuid())
     jobDescription                 String?
