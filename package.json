@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
@@ -41,6 +42,8 @@
     "lucide-react": "^0.408.0",
     "next": "^14.2.4",
     "next-auth": "^4.24.7",
+    "next-seo": "^6.5.0",
+    "next-sitemap": "^4.2.3",
     "next-themes": "^0.3.0",
     "office-text-extractor": "^3.0.3",
     "ollama": "^0.5.2",

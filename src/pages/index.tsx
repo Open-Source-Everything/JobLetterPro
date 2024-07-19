@@ -11,76 +11,31 @@ import {
   Textarea,
   Tooltip,
 } from "@mantine/core";
-import Link from "next/link";
 import { Fragment, useState } from "react";
 import { Tabs, rem } from "@mantine/core";
 import { Dropzone, PDF_MIME_TYPE } from "@mantine/dropzone";
 import { extractPdfData } from "@/lib/pdf-extracter";
-import {
-  TbCheck,
-  TbCopy,
-  TbFile,
-  TbPhoto,
-  TbUpload,
-  TbX,
-} from "react-icons/tb";
+import { TbCheck, TbCopy, TbFile, TbUpload, TbX } from "react-icons/tb";
 import { toast } from "sonner";
 import { api } from "@/utils/api";
 import { Badge } from "@/components/ui/badge";
+import FeaturesSection from "@/components/molecules/FeatureSection";
 
 export default function Home() {
-  const [startGeneration, setStartGeneration] = useState(false);
-  const [resume, setResume] = useState("");
-  const [jobDescription, setJobDescription] = useState("");
   return (
     <main className="p-4">
       <div className="h-20"></div>
-      {/* <div>
-        <section>
-          <div className="container mx-auto grid grid-cols-1 gap-4 px-5 md:grid-cols-2">
-            <div>
-              <div className="max-w-xl text-center md:max-w-full md:text-left">
-                <h1 className=" text-5xl font-semibold leading-none md:text-6xl">
-                  AI Cover Letter Generator
-                </h1>
-                <p className=" mb-8 mt-6 text-lg sm:mb-12">
-                  The AI Cover Letter Generator will write you tailored,
-                  position-specific summaries in a matter of seconds. Start
-                  generating resume summaries that showcase your strongest
-                  career wins in a way that will instantly grab the attention of
-                  future employers.
-                </p>
-                <div className={cn(buttonVariants({}))}>
-                  <Link href="/cover-letter" rel="noopener noreferrer">
-                    <span>Generate Your Cover Letter</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <div className="bg-teal-1 rounded-2xl">
-              <div className=" ">
-                <img
-                  src="assets/svg/Business_SVG.svg"
-                  alt=""
-                  className="xl:h-112 2xl:h-128 h-72 object-contain sm:h-80 lg:h-96"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-      </div> */}
       <div className="relative flex h-full w-full items-center justify-center py-20">
         <div>
           <div className="max-w-4xl text-center">
             <h1 className="text-5xl font-semibold leading-none md:text-6xl">
-              AI Cover Letter Generator
+              JobLetterPro: AI-Powered Cover Letter Generator
             </h1>
             <p className="mb-8 mt-6 text-lg sm:mb-12">
-              The AI Cover Letter Generator will write you tailored,
-              position-specific summaries in a matter of seconds. Start
-              generating resume summaries that showcase your strongest career
-              wins in a way that will instantly grab the attention of future
-              employers.
+              Create tailored, professional cover letters in seconds with
+              JobLetterPro. Our AI-powered tool helps you craft compelling cover
+              letters that highlight your strengths and align perfectly with job
+              descriptions, giving you a competitive edge in your job search.
             </p>
             <button
               className={cn(
@@ -88,7 +43,6 @@ export default function Home() {
                   className: "rounded-3xl transition-all hover:scale-105",
                 }),
               )}
-              onClick={() => setStartGeneration(true)}
             >
               <>
                 <span>Generate Your Cover Letter</span>
@@ -120,82 +74,7 @@ export default function Home() {
           "[mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]",
         )}
       />
-
-      <section className="container mx-auto flex flex-col items-center justify-center py-20">
-        <div>
-          <h2 className="text-center text-5xl font-semibold">
-            A Smarter Way to Write Your Cover Letters
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 gap-10 py-20 md:grid-cols-2 lg:grid-cols-3">
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex max-w-full items-center justify-center rounded-2xl border">
-              <img
-                className="rounded-2xl"
-                width="379.5"
-                loading="lazy"
-                src="https://cdn.prod.website-files.com/627c8700df0be67c4b1d533c/653067941c13f5065f985414_CoveLetter_Ai.png"
-              />
-            </div>
-            <div className="flex flex-col gap-y-3">
-              <h2 className="text-xl font-medium">
-                Write a Tailored Cover Letter In Seconds
-              </h2>
-              <p>
-                The AI Cover Letter Generator writes a highly personalized cover
-                letter based on both your career history and the requirements of
-                the position you’re applying for.
-              </p>
-            </div>
-          </div>
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex max-w-full items-center justify-center rounded-2xl border">
-              <img
-                className="rounded-2xl"
-                width="379.5"
-                loading="lazy"
-                src="https://cdn.prod.website-files.com/627c8700df0be67c4b1d533c/653067941c13f5065f985414_CoveLetter_Ai.png"
-              />
-            </div>
-            <div className="flex flex-col gap-y-3">
-              <h2 className="text-xl font-medium">
-                Write a Tailored Cover Letter In Seconds
-              </h2>
-              <p>
-                The AI Cover Letter Generator writes a highly personalized cover
-                letter based on both your career history and the requirements of
-                the position you’re applying for.
-              </p>
-            </div>
-          </div>
-          <div className="flex w-full flex-col gap-4">
-            <div className="flex max-w-full items-center justify-center rounded-2xl border">
-              <img
-                className="rounded-2xl"
-                width="379.5"
-                loading="lazy"
-                src="https://cdn.prod.website-files.com/627c8700df0be67c4b1d533c/653067941c13f5065f985414_CoveLetter_Ai.png"
-              />
-            </div>
-            <div className="flex flex-col gap-y-3">
-              <h2 className="text-xl font-medium">
-                Write a Tailored Cover Letter In Seconds
-              </h2>
-              <p>
-                The AI Cover Letter Generator writes a highly personalized cover
-                letter based on both your career history and the requirements of
-                the position you’re applying for.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <Button className="h-12 rounded-3xl px-6 py-4 text-xl transition-all hover:scale-105">
-          Create a Cover Letter in Seconds
-        </Button>
-      </section>
-
-      <div></div>
+      <FeaturesSection />
     </main>
   );
 }
@@ -206,7 +85,6 @@ const CoverLetterGeneratorForm = () => {
   const [file, setFile] = useState<File>();
   const [resume, setResume] = useState("");
   const [jobDescription, setJobDescription] = useState("");
-  const [startGeneration, setStartGeneration] = useState(false);
   const [loading, setLoading] = useState({
     resume: false,
     jobDescription: false,
@@ -227,6 +105,10 @@ const CoverLetterGeneratorForm = () => {
       },
       onError: (error) => {
         setLoading({ ...loading, coverLetter: false });
+        toast.error(error.message, {
+          dismissible: true,
+          closeButton: true,
+        });
       },
       onMutate: () => {
         setLoading({ ...loading, coverLetter: true });
@@ -457,7 +339,6 @@ const CoverLetterGeneratorForm = () => {
                   }
                 }
 
-                setStartGeneration(true);
                 mutate({
                   jobDescription: jobDescription,
                   resumeData: resume,
