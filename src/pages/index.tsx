@@ -60,7 +60,7 @@ export default function Home() {
               className="flex flex-col gap-4 py-4"
             >
               <h3 className="text-3xl font-medium">
-                Generate your cover letter with simple 3 step
+                Generate your cover letter with simple 2 step
               </h3>
             </div>
             <CoverLetterGeneratorForm />

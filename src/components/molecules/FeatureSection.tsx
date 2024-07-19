@@ -2,28 +2,30 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 
 const FeatureCard = ({
-  imageSrc,
   title,
   description,
+  color,
 }: {
-  imageSrc: string;
   title: string;
   description: string;
+  color: string;
 }) => (
-  <div className="flex w-full flex-col gap-4">
-    <div className="flex max-w-full items-center justify-center rounded-2xl border">
-      <img
-        className="rounded-2xl"
-        width="379.5"
-        height="253"
-        loading="lazy"
-        src={imageSrc}
-        alt={title}
+  <div className="relative flex w-full flex-col gap-4 overflow-hidden rounded-lg border border-gray-200 p-6 transition-all duration-300 hover:shadow-lg">
+    <svg
+      viewBox="0 0 200 200"
+      xmlns="http://www.w3.org/2000/svg"
+      className="absolute -right-20 -top-20 h-64 w-64 opacity-10"
+    >
+      <path
+        fill={color}
+        d="M39.5,-65.3C50.2,-56.7,57.7,-44.3,65.1,-31.1C72.5,-17.9,79.8,-3.9,79.2,10.1C78.6,24.1,70.1,38.1,59.3,48.9C48.5,59.7,35.3,67.3,21.1,71.3C6.9,75.4,-8.3,75.8,-22.6,72.1C-36.9,68.3,-50.4,60.3,-60.1,49C-69.8,37.7,-75.8,23.1,-77.7,7.8C-79.6,-7.5,-77.3,-23.5,-70.5,-37.3C-63.6,-51.1,-52.1,-62.7,-38.8,-69.8C-25.5,-76.9,-10.4,-79.5,2.6,-83.6C15.5,-87.8,28.8,-73.9,39.5,-65.3Z"
+        transform="translate(100 100)"
       />
-    </div>
-    <div className="flex flex-col gap-y-3">
+    </svg>
+
+    <div className="relative z-10 flex flex-col gap-y-3">
       <h3 className="text-xl font-medium">{title}</h3>
-      <p>{description}</p>
+      <p className="text-gray-600">{description}</p>
     </div>
   </div>
 );
@@ -31,25 +33,22 @@ const FeatureCard = ({
 const FeaturesSection = () => {
   const features = [
     {
-      imageSrc:
-        "https://cdn.prod.website-files.com/627c8700df0be67c4b1d533c/653067941c13f5065f985414_CoveLetter_Ai.png",
       title: "AI-Powered Cover Letter Generation",
       description:
         "Our advanced AI analyzes your resume and the job description to create a tailored, professional cover letter in seconds, saving you time and effort.",
+      color: "#4A90E2", // Soft Blue
     },
     {
-      imageSrc:
-        "https://cdn.prod.website-files.com/627c8700df0be67c4b1d533c/653067941c13f5065f985414_CoveLetter_Ai.png",
       title: "ATS-Optimized Content",
       description:
         "JobLetterPro ensures your cover letter includes relevant keywords and phrases, increasing your chances of passing through Applicant Tracking Systems (ATS).",
+      color: "#FF6B6B", // Coral Pink
     },
     {
-      imageSrc:
-        "https://cdn.prod.website-files.com/627c8700df0be67c4b1d533c/653067941c13f5065f985414_CoveLetter_Ai.png",
       title: "Customizable Professional Templates",
       description:
-        "Choose from a variety of industry-specific templates and easily customize your cover letter to match your personal style and the company's culture.",
+        "Easily customize your cover letter to match your personal style and the company's culture.",
+      color: "#50E3C2", // Mint Green
     },
   ];
 
