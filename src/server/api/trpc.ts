@@ -12,9 +12,23 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
+
+// Initialize Redis client
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+// Create a new ratelimiter, that allows 3 requests per 1 second
+const ratelimit = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(3, "1 s"),
+});
 
 /**
  * 1. CONTEXT
@@ -26,6 +40,7 @@ import { db } from "@/server/db";
 
 interface CreateContextOptions {
   session: Session | null;
+  req?: CreateNextContextOptions["req"];
 }
 
 /**
@@ -42,6 +57,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     db,
+    req: opts.req,
   };
 };
 
@@ -59,6 +75,7 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    req,
   });
 };
 
@@ -133,3 +150,34 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
     },
   });
 });
+
+/**
+ * Rate limiter middleware
+ */
+const rateLimiter = t.middleware(async ({ ctx, next }) => {
+  const ip =
+    ctx.req?.headers["x-forwarded-for"] ?? ctx.req?.socket.remoteAddress;
+
+  if (!ip) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Unable to determine client IP address",
+    });
+  }
+
+  const { success } = await ratelimit.limit(ip as string);
+
+  if (!success) {
+    throw new TRPCError({
+      code: "TOO_MANY_REQUESTS",
+      message: "Rate limit exceeded. Please try again later.",
+    });
+  }
+
+  return next();
+});
+
+/**
+ * Public procedure with rate limiting
+ */
+export const rateLimitedPublicProcedure = publicProcedure.use(rateLimiter);

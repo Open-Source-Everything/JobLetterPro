@@ -4,6 +4,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
+  rateLimitedPublicProcedure,
 } from "@/server/api/trpc";
 import { getAzureGPTQuery } from "@/utils/azureGptApi";
 import { getGroqApi } from "@/utils/getGroqApi";
@@ -408,7 +409,7 @@ NOTE- Do not use placeholder text like [Company Name] or [Position Title] in the
         generatedCoverLetterGenerationData,
       };
     }),
-  generateCoverLetterFromTemplate: publicProcedure
+  generateCoverLetterFromTemplate: rateLimitedPublicProcedure
     .input(z.object({ jobDescription: z.string(), resumeData: z.string() }))
     .mutation(async ({ input, ctx }) => {
       try {
