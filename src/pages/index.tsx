@@ -153,61 +153,83 @@ const CoverLetterGeneratorForm = () => {
               </Tabs.List>
 
               <Tabs.Panel value="upload_resume" className="relative">
-                <Dropzone
-                  onDrop={(files) => handleFileChange(files[0] as File)}
-                  onReject={(files) => console.log("rejected files", files)}
-                  multiple={false}
-                  maxSize={5 * 1024 ** 2}
-                  accept={PDF_MIME_TYPE}
-                  loading={loading.resume}
-                  className="relative"
-                >
-                  <Group
-                    justify="center"
-                    gap="xl"
-                    mih={220}
-                    style={{ pointerEvents: "none" }}
-                    className="my-4 rounded-lg border border-dashed"
+                {file ? (
+                  <div className="flex items-center justify-center rounded-lg border p-4">
+                    <TbFile
+                      style={{
+                        width: rem(52),
+                        height: rem(52),
+                        color: "var(--mantine-color-blue-6)",
+                      }}
+                    />
+                    <Text size="lg" ml="md">
+                      {file.name}
+                    </Text>
+                    <ActionIcon
+                      color="red"
+                      variant="subtle"
+                      onClick={() => setFile(undefined)}
+                      ml="auto"
+                    >
+                      <TbX size={20} />
+                    </ActionIcon>
+                  </div>
+                ) : (
+                  <Dropzone
+                    onDrop={(files) => handleFileChange(files[0] as File)}
+                    onReject={(files) => console.log("rejected files", files)}
+                    multiple={false}
+                    maxSize={5 * 1024 ** 2}
+                    accept={PDF_MIME_TYPE}
+                    loading={loading.resume}
+                    className="relative"
                   >
-                    <Dropzone.Accept>
-                      <TbUpload
-                        style={{
-                          width: rem(52),
-                          height: rem(52),
-                          color: "var(--mantine-color-blue-6)",
-                        }}
-                      />
-                    </Dropzone.Accept>
-                    <Dropzone.Reject>
-                      <TbX
-                        style={{
-                          width: rem(52),
-                          height: rem(52),
-                          color: "var(--mantine-color-red-6)",
-                        }}
-                      />
-                    </Dropzone.Reject>
-                    <Dropzone.Idle>
-                      <TbFile
-                        style={{
-                          width: rem(52),
-                          height: rem(52),
-                          color: "var(--mantine-color-dimmed)",
-                        }}
-                      />
-                    </Dropzone.Idle>
+                    <Group
+                      justify="center"
+                      gap="xl"
+                      mih={220}
+                      style={{ pointerEvents: "none" }}
+                      className="my-4 rounded-lg border border-dashed"
+                    >
+                      <Dropzone.Accept>
+                        <TbUpload
+                          style={{
+                            width: rem(52),
+                            height: rem(52),
+                            color: "var(--mantine-color-blue-6)",
+                          }}
+                        />
+                      </Dropzone.Accept>
+                      <Dropzone.Reject>
+                        <TbX
+                          style={{
+                            width: rem(52),
+                            height: rem(52),
+                            color: "var(--mantine-color-red-6)",
+                          }}
+                        />
+                      </Dropzone.Reject>
+                      <Dropzone.Idle>
+                        <TbFile
+                          style={{
+                            width: rem(52),
+                            height: rem(52),
+                            color: "var(--mantine-color-dimmed)",
+                          }}
+                        />
+                      </Dropzone.Idle>
 
-                    <div>
-                      <Text size="xl" inline>
-                        Drag images here or click to select files
-                      </Text>
-                      <Text size="sm" c="dimmed" inline mt={7}>
-                        Attach as many files as you like, each file should not
-                        exceed 5mb
-                      </Text>
-                    </div>
-                  </Group>
-                </Dropzone>
+                      <div>
+                        <Text size="xl" inline>
+                          Drag resume here or click to select file
+                        </Text>
+                        <Text size="sm" c="dimmed" inline mt={7}>
+                          Upload your resume in PDF format (max 5MB)
+                        </Text>
+                      </div>
+                    </Group>
+                  </Dropzone>
+                )}
               </Tabs.Panel>
               <Tabs.Panel value="add_resume">
                 <Textarea
@@ -224,16 +246,14 @@ const CoverLetterGeneratorForm = () => {
                     },
                   }}
                   rows={15}
-                  // minRows={28}
-                  // maxRows={28}
                 />
               </Tabs.Panel>
             </Tabs>
-            {file && (
+            {/* {file && (
               <div className="flex w-full items-center justify-center">
                 <Badge className="">{file?.name}</Badge>
               </div>
-            )}
+            )} */}
           </div>
         )}
         {activeTab === 1 && (
@@ -267,12 +287,14 @@ const CoverLetterGeneratorForm = () => {
         {activeTab === 2 && (
           <div>
             <div>
-              <h3 className="text-xl font-medium">
+              <h3 className="text-xl font-medium mb-3">
                 Your cover letter is below
               </h3>
               <span className="text-sm">
-                You can adjust this draft to further tailor it to your needs and
-                use [] Free's suggestions to ensure your final product shines.
+                You can now refine this AI-generated cover letter to perfectly
+                match your personal style and the specific job requirements. Use
+                JobLetterPro's intelligent suggestions to enhance your letter
+                and make it stand out to potential employers.
               </span>
               <Textarea
                 disabled={loading.coverLetter}
