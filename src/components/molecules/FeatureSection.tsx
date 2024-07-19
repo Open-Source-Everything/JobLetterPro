@@ -63,9 +63,11 @@ const FeaturesSection = () => {
           <FeatureCard key={index} {...feature} />
         ))}
       </div>
-      <Button className="h-12 rounded-3xl px-6 py-4 text-xl transition-all hover:scale-105">
-        Create Your Professional Cover Letter Now
-      </Button>
+      <a href="#generate-cover-letter">
+        <Button className="h-12 rounded-3xl px-6 py-4 text-xl transition-all hover:scale-105">
+          Create Your Professional Cover Letter Now
+        </Button>
+      </a>
     </section>
   );
 };

@@ -18,7 +18,6 @@ import { extractPdfData } from "@/lib/pdf-extracter";
 import { TbCheck, TbCopy, TbFile, TbUpload, TbX } from "react-icons/tb";
 import { toast } from "sonner";
 import { api } from "@/utils/api";
-import { Badge } from "@/components/ui/badge";
 import FeaturesSection from "@/components/molecules/FeatureSection";
 
 export default function Home() {
@@ -45,7 +44,9 @@ export default function Home() {
               )}
             >
               <>
-                <span>Generate Your Cover Letter</span>
+                <a href="#generate-cover-letter">
+                  <span>Generate Your Cover Letter</span>
+                </a>
               </>
             </button>
           </div>
@@ -54,7 +55,10 @@ export default function Home() {
       <div>
         <div className="mx-auto flex min-h-96 w-full max-w-[1200px] items-center justify-center rounded-xl bg-amber-500 p-20">
           <div className="h-full w-full rounded-md bg-white p-10">
-            <div className="flex flex-col gap-4 py-4">
+            <div
+              id="generate-cover-letter"
+              className="flex flex-col gap-4 py-4"
+            >
               <h3 className="text-3xl font-medium">
                 Generate your cover letter with simple 3 step
               </h3>
@@ -287,7 +291,7 @@ const CoverLetterGeneratorForm = () => {
         {activeTab === 2 && (
           <div>
             <div>
-              <h3 className="text-xl font-medium mb-3">
+              <h3 className="mb-3 text-xl font-medium">
                 Your cover letter is below
               </h3>
               <span className="text-sm">
