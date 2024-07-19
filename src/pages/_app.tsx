@@ -5,7 +5,7 @@ import { type AppType } from "next/app";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import { DefaultSeo, SoftwareAppJsonLd } from "next-seo";
-
+import { Analytics } from "@vercel/analytics/react";
 import { api } from "@/utils/api";
 import "@/styles/globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -46,6 +46,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
         />
         <div className={GeistSans.className}>
           <Component {...pageProps} />
+          <Analytics />
           <Toaster />
         </div>
       </SessionProvider>
