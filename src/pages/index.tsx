@@ -344,7 +344,7 @@ const CoverLetterGeneratorForm = () => {
                   resumeData: resume,
                 });
               }}
-              className="flex h-12 items-center justify-center rounded-3xl px-6 py-4 text-xl transition-all hover:scale-105"
+              className="ml-4 flex h-12 items-center justify-center rounded-3xl px-6 py-4 text-xl transition-all hover:scale-105"
             >
               Generate Cover Letter
               {loading.coverLetter && (
@@ -360,7 +360,7 @@ const CoverLetterGeneratorForm = () => {
         {activeTab === 2 && (
           <>
             {coverLetter && (
-              <div>
+              <div className="ml-4">
                 <CopyActionButton value={coverLetter} />
               </div>
             )}
